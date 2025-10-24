@@ -66,22 +66,12 @@ namespace dataCentre
                 }
 
                 // Здесь можно вызывать любую «тяжёлую» игровую логику, требующую регулярного запуска.
-                foreach (var server in new[]
-                {
-                    AllServers.server1,
-                    AllServers.server2,
-                    AllServers.server3,
-                    AllServers.server4,
-                    AllServers.server5
-                })
-                {
-                    server.testWork();
-                }
-
+                EventGen.Event();
+                
                 lock (_consoleLock)
                 {
                     // Сообщаем пользователю о завершении фоновой работы.
-                    Console.WriteLine("[Background] Server diagnostics completed.");
+                    //Console.WriteLine("[Background] Server diagnostics completed.");
                 }
             }
         }

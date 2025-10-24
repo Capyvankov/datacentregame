@@ -69,7 +69,7 @@ namespace dataCentre.server
             panel.Padding = new Padding(2, 2, 2, 2);
             AnsiConsole.Profile.Capabilities.Ansi = true;
             AnsiConsole.Write(panel);
-        }
+        }     
     }
 
     public enum ServerStatus
