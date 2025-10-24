@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace dataCentre.server
 {
-    internal class Server
+    public class Server
     {
         public required int serverNum;
-        public int temp = 0;
-        public int load = 0;
-        public int memoryUse = 0;
-        public int powerDraw = 0;
+        public int temp = 0;    //температура
+        public int load = 0;    //нагрузка на проц
+        public int memoryUse = 0; //использвоания оперативки
+        public int powerDraw = 0; //энергопотребление
         public ServerStatus status = ServerStatus.Offline;
 
         //метода работы с данными серверов
@@ -45,6 +45,16 @@ namespace dataCentre.server
             this.powerDraw += powerDraw;
         }
 
+        public void shutdown()
+        {
+            if (status != ServerStatus.Failed) this.status = ServerStatus.Offline;
+        }
+
+        public void switchOn()
+        {
+            if (status != ServerStatus.Failed) this.status = ServerStatus.Online;
+        }
+
         // методы вывода
 
         public void printServerStatus()
@@ -57,11 +67,12 @@ namespace dataCentre.server
             panel.Header = new PanelHeader($"Server {serverNum} status");
             panel.Border = BoxBorder.Rounded;
             panel.Padding = new Padding(2, 2, 2, 2);
+            AnsiConsole.Profile.Capabilities.Ansi = true;
             AnsiConsole.Write(panel);
         }
     }
 
-    enum ServerStatus
+    public enum ServerStatus
     {
         Online,   // работает
         Offline,  // выключен

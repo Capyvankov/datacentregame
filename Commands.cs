@@ -17,14 +17,27 @@ namespace dataCentre
 
         public void readCommand(string inpCommand)
         {
-            Server server = new Server { serverNum = 1 };
-            Cmd printCmd = new Cmd { cmdName = "PRINT", commandDo = (Action<string[]>)PrintDelegate };
-            Cmd sumCmd = new Cmd { cmdName = "SUM", commandDo = (Action<string[]>)SumDelegate };
-            Cmd statusCmd = new Cmd { cmdName = "STATUS", commandDo = (Action<Server>)StatusDelegate };
+            
+            Cmd printCmd = new Cmd { cmdName = "print", commandDo = (Action<string[]>)PrintDelegate };
+            Cmd sumCmd = new Cmd { cmdName = "sum", commandDo = (Action<string[]>)SumDelegate };
+            Cmd statusCmd = new Cmd { cmdName = "status", commandDo = (Action<Server>)StatusDelegate };
             string[] command = inpCommand.Split(" ");
-            if (printCmd.cmdName == command[0]) ((Action<string[]>)printCmd.commandDo)(command);
-            else if (sumCmd.cmdName == command[0]) ((Action<string[]>)sumCmd.commandDo)(command);
-            else if (statusCmd.cmdName == command[0]) ((Action<Server>)statusCmd.commandDo)(server);
+            if (printCmd.cmdName == command[0])
+            {
+                ((Action<string[]>)printCmd.commandDo)(command);
+            }
+            else if (sumCmd.cmdName == command[0])
+            {
+                ((Action<string[]>)sumCmd.commandDo)(command);
+            }
+            else if (statusCmd.cmdName == command[0])
+            {
+                if (command[1] == "1") ((Action<Server>)statusCmd.commandDo)(AllServers.server1);
+                if (command[1] == "2") ((Action<Server>)statusCmd.commandDo)(AllServers.server2);
+                if (command[1] == "3") ((Action<Server>)statusCmd.commandDo)(AllServers.server3);
+                if (command[1] == "4") ((Action<Server>)statusCmd.commandDo)(AllServers.server4);
+                if (command[1] == "5") ((Action<Server>)statusCmd.commandDo)(AllServers.server5);
+            }
         } 
     }
 }
