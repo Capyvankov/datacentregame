@@ -13,6 +13,5 @@ namespace dataCentre.server
         public int load = 0;
         public int memoryUse = 0;
         public int powerDraw = 0;
-
     }
 }
