@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,15 +15,29 @@ namespace dataCentre.server
         public int load = 0;    //нагрузка на проц
         public int memoryUse = 0; //использвоания оперативки
         public int powerDraw = 0; //энергопотребление
+        public bool coolant = false;
         public ServerStatus status = ServerStatus.Offline;
 
         //метода работы с данными серверов
 
         public void testWork()
         {
-            if (temp >= 100) status = ServerStatus.Failed;
-            if (load >= 100) status = ServerStatus.Offline;
-            if (memoryUse >= 100) status = ServerStatus.Failed;
+            if (temp >= 100)
+            {
+                Printer.SystMes($"srv{this.serverNum}: Thermal runaway detected.", "#8B0000", "CRITICAL");
+                serverDie();
+
+            }
+            if (load >= 100) 
+            {
+                Printer.SystMes($"srv{this.serverNum}: CPU overload detected.", "#8B0000", "CRITICAL");
+                serverDie();
+            }
+            if (memoryUse >= 100)
+            {
+                Printer.SystMes($"srv{this.serverNum}: Memory usage critical!", "red", "ERROR");
+                shutdown();
+            }
         }
 
         public void addTemp(int temp)
@@ -44,15 +59,92 @@ namespace dataCentre.server
         {
             this.powerDraw += powerDraw;
         }
+        public void coolantUse(bool cool)
+        {
+            if (cool == true)
+            {
+                if (coolant == true)
+                {
+                    Printer.SystMes("Coolant already on!", "yellow", "WARN");
+                }
+                else
+                {
+                    Printer.SystMes("Coolant on", "cyan", "SYSTEM");
+                    coolant = true;
+                    powerDraw += 100;
+                }
+            }
+            if (cool == false)
+            {
+                if (coolant == false)
+                {
+                    Printer.SystMes("Coolant already off!", "yellow", "WARN");
+                }
+                else
+                {
+                    Printer.SystMes("Coolant off", "cyan", "SYSTEM");
+                    coolant = false;
+                    powerDraw -= 100;
+                }
+            }
+            
+        }
 
         public void shutdown()
         {
-            if (status != ServerStatus.Failed) this.status = ServerStatus.Offline;
+            if (status != ServerStatus.Failed)
+            {
+                this.status = ServerStatus.Offline;
+                this.load = 0;
+                this.memoryUse = 0;
+                this.powerDraw = 0;
+                this.coolant = false;
+                Printer.SystMes($"srv{this.serverNum} offline", "yellow", "WARN");
+            }
         }
 
         public void switchOn()
         {
-            if (status != ServerStatus.Failed) this.status = ServerStatus.Online;
+            if (status != ServerStatus.Failed)
+            {
+                this.status = ServerStatus.Online;
+                this.load = 20;
+                this.memoryUse = 20;
+                this.powerDraw = this.memoryUse * 10 + this.load * 20;
+                this.coolant = false;
+                Printer.SystMes($"srv{this.serverNum} online", "yellow", "WARN");
+            }
+        }
+
+        public void reboot()
+        {
+            AnsiConsole.Progress()
+           .Start(ctx =>
+           {
+               var task = ctx.AddTask("Reboot");
+               task.MaxValue = 100;
+
+               for (int i = 0; i <= 100; i++)
+               {
+                   task.Value = i;
+                   Thread.Sleep(30); // 100 * 30 мс = ~3 сек
+               }
+           });
+            Printer.SystMes("Rebooting is sucsesfull", "cyan", "INFO");
+            this.memoryUse = this.memoryUse / 2;
+        }
+
+        public void serverDie()
+        {
+            if (status != ServerStatus.Failed)
+            {
+                this.status = ServerStatus.Failed;
+                this.load = 0;
+                this.memoryUse = 0;
+                this.powerDraw = 0;
+                this.coolant = false;
+                Printer.SystMes($"srv{this.serverNum} : hardware integrity lost", "#8B0000", "CRITICAL");
+            }
         }
 
         // методы вывода
@@ -63,8 +155,9 @@ namespace dataCentre.server
                 $"temp : {this.temp}\n" +
                 $"load : {this.load} \n" +
                 $"memory use : {this.memoryUse} \n" +
-                $"power draw : {this.powerDraw} \n");
-            panel.Header = new PanelHeader($"Server {serverNum} status");
+                $"power draw : {this.powerDraw} \n" +
+                $"coolant : {this.coolant}");
+            panel.Header = new PanelHeader($"srv{serverNum} status");
             panel.Border = BoxBorder.Rounded;
             panel.Padding = new Padding(2, 2, 2, 2);
             AnsiConsole.Profile.Capabilities.Ansi = true;

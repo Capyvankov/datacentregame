@@ -1,5 +1,6 @@
 ﻿using dataCentre.commands;
 using dataCentre.server;
+using Spectre.Console;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,22 +20,22 @@ namespace dataCentre
             _consoleLock = consoleLock;
         }
 
-        void PrintDelegate(string[] command)
-        {
-            lock (_consoleLock)
-            {
-                Console.WriteLine(string.Join(" ", command.Skip(1)));
-            }
-        }
+        //void PrintDelegate(string[] command)
+        //{
+        //    lock (_consoleLock)
+        //    {
+        //        Console.WriteLine(string.Join(" ", command.Skip(1)));
+        //    }
+        //}
 
-        void SumDelegate(string[] command)
-        {
-            int result = int.Parse(command[1]) + int.Parse(command[2]);
-            lock (_consoleLock)
-            {
-                Console.WriteLine(result);
-            }
-        }
+        //void SumDelegate(string[] command)
+        //{
+        //    int result = int.Parse(command[1]) + int.Parse(command[2]);
+        //    lock (_consoleLock)
+        //    {
+        //        Console.WriteLine(result);
+        //    }
+        //}
 
         void StatusDelegate(Server server)
         {
@@ -44,6 +45,63 @@ namespace dataCentre
             }
         }
 
+        void RebootDelegate(Server server)
+        {
+            lock (_consoleLock)
+            {
+                server.reboot();
+            }
+        }
+
+        void ShutdownDelegate(Server server)
+        {
+            lock (_consoleLock)
+            {
+                server.shutdown();
+            }
+        }
+
+        void StartDelegate(Server server)
+        {
+            lock (_consoleLock)
+            {
+                server.switchOn();
+            }
+        }
+
+        void CoolingDelegate(Server server, bool coolant)
+        {
+            lock (_consoleLock)
+            {
+                server.coolantUse(coolant);
+            }
+        }
+        void ReportDelegate()
+        {
+            lock (_consoleLock)
+            {
+                var table = new Table();
+
+                // 3 колонки
+                table.AddColumn("Server");
+                table.AddColumn(new TableColumn("Status").Centered());
+                table.AddColumn(new TableColumn("Power").RightAligned());
+
+                // строки по 3 ячейки
+                table.AddRow("srv1", $"{AllServers.server1.status}", $"{AllServers.server1.powerDraw}");
+                table.AddRow("srv2", $"{AllServers.server2.status}", $"{AllServers.server2.powerDraw}");
+                table.AddRow("srv3", $"{AllServers.server3.status}", $"{AllServers.server3.powerDraw}");
+                table.AddRow("srv4", $"{AllServers.server4.status}", $"{AllServers.server4.powerDraw}");
+                table.AddRow("srv5", $"{AllServers.server5.status}", $"{AllServers.server5.powerDraw}");
+
+                table.Expand(); // по ширине консоли
+
+                AnsiConsole.Write(table);
+            }
+
+        }
+
+
         public bool readCommand(string inpCommand)
         {
             if (string.IsNullOrWhiteSpace(inpCommand))
@@ -51,35 +109,81 @@ namespace dataCentre
                 return false;
             }
 
-            Cmd printCmd = new Cmd { cmdName = "print", commandDo = (Action<string[]>)PrintDelegate };
-            Cmd sumCmd = new Cmd { cmdName = "sum", commandDo = (Action<string[]>)SumDelegate };
+            //Cmd printCmd = new Cmd { cmdName = "print", commandDo = (Action<string[]>)PrintDelegate };
+            //Cmd sumCmd = new Cmd { cmdName = "sum", commandDo = (Action<string[]>)SumDelegate };
             Cmd statusCmd = new Cmd { cmdName = "status", commandDo = (Action<Server>)StatusDelegate };
+            Cmd rebootCmd = new Cmd { cmdName = "reboot", commandDo = (Action<Server>)RebootDelegate };
+            Cmd shutdownCmd = new Cmd { cmdName = "shutdown", commandDo = (Action<Server>)ShutdownDelegate };
+            Cmd startCmd = new Cmd { cmdName = "start", commandDo = (Action<Server>)StartDelegate };
+            Cmd coolingCmd = new Cmd { cmdName = "cooling", commandDo = (Action<Server, bool>)CoolingDelegate };
+            Cmd reportCmd = new Cmd { cmdName = "report", commandDo = (Action)ReportDelegate };
+
+
             string[] command = inpCommand.Split(" ");
             // Специальная команда завершения игры: её обрабатывает сам Game.GoGame.
-            if (string.Equals(command[0], "exit", StringComparison.OrdinalIgnoreCase))
-            {
-                lock (_consoleLock)
-                {
-                    Console.WriteLine("Exiting game...");
-                }
+            //if (string.Equals(command[0], "exit", StringComparison.OrdinalIgnoreCase))
+            //{
+            //    lock (_consoleLock)
+            //    {
+            //        Console.WriteLine("Exiting game...");
+            //    }
 
-                return true;
-            }
-            if (printCmd.cmdName == command[0])
-            {
-                ((Action<string[]>)printCmd.commandDo)(command);
-            }
-            else if (sumCmd.cmdName == command[0])
-            {
-                ((Action<string[]>)sumCmd.commandDo)(command);
-            }
-            else if (statusCmd.cmdName == command[0])
+            //    return true;
+            //}
+            //if (printCmd.cmdName == command[0])
+            //{
+            //    ((Action<string[]>)printCmd.commandDo)(command);
+            //}
+            //else if (sumCmd.cmdName == command[0])
+            //{
+            //    ((Action<string[]>)sumCmd.commandDo)(command);
+            //}
+            if (statusCmd.cmdName == command[0])
             {
                 if (command[1] == "1") ((Action<Server>)statusCmd.commandDo)(AllServers.server1);
                 if (command[1] == "2") ((Action<Server>)statusCmd.commandDo)(AllServers.server2);
                 if (command[1] == "3") ((Action<Server>)statusCmd.commandDo)(AllServers.server3);
                 if (command[1] == "4") ((Action<Server>)statusCmd.commandDo)(AllServers.server4);
                 if (command[1] == "5") ((Action<Server>)statusCmd.commandDo)(AllServers.server5);
+            }
+            else if (rebootCmd.cmdName == command[0])
+            {
+                if (command[1] == "1") ((Action<Server>)rebootCmd.commandDo)(AllServers.server1);
+                if (command[1] == "2") ((Action<Server>)rebootCmd.commandDo)(AllServers.server2);
+                if (command[1] == "3") ((Action<Server>)rebootCmd.commandDo)(AllServers.server3);
+                if (command[1] == "4") ((Action<Server>)rebootCmd.commandDo)(AllServers.server4);
+                if (command[1] == "5") ((Action<Server>)rebootCmd.commandDo)(AllServers.server5);
+            }
+            else if (shutdownCmd.cmdName == command[0])
+            {
+                if (command[1] == "1") ((Action<Server>)shutdownCmd.commandDo)(AllServers.server1);
+                if (command[1] == "2") ((Action<Server>)shutdownCmd.commandDo)(AllServers.server2);
+                if (command[1] == "3") ((Action<Server>)shutdownCmd.commandDo)(AllServers.server3);
+                if (command[1] == "4") ((Action<Server>)shutdownCmd.commandDo)(AllServers.server4);
+                if (command[1] == "5") ((Action<Server>)shutdownCmd.commandDo)(AllServers.server5);
+            }
+            else if (startCmd.cmdName == command[0])
+            {
+                if (command[1] == "1") ((Action<Server>)startCmd.commandDo)(AllServers.server1);
+                if (command[1] == "2") ((Action<Server>)startCmd.commandDo)(AllServers.server2);
+                if (command[1] == "3") ((Action<Server>)startCmd.commandDo)(AllServers.server3);
+                if (command[1] == "4") ((Action<Server>)startCmd.commandDo)(AllServers.server4);
+                if (command[1] == "5") ((Action<Server>)startCmd.commandDo)(AllServers.server5);
+            }
+            else if (coolingCmd.cmdName == command[0])
+            {
+                bool cooling = false; 
+                if (command[2] == "On") cooling = true;
+                if (command[2] == "Off") cooling = false;
+                if (command[1] == "1") ((Action<Server, bool>)coolingCmd.commandDo)(AllServers.server1, cooling);
+                if (command[1] == "2") ((Action<Server, bool>)coolingCmd.commandDo)(AllServers.server2, cooling);
+                if (command[1] == "3") ((Action<Server, bool>)coolingCmd.commandDo)(AllServers.server3, cooling);
+                if (command[1] == "4") ((Action<Server, bool>)coolingCmd.commandDo)(AllServers.server4, cooling);
+                if (command[1] == "5") ((Action<Server, bool>)coolingCmd.commandDo)(AllServers.server5, cooling);
+            }
+            else if (reportCmd.cmdName == command[0])
+            {
+                ((Action)reportCmd.commandDo)();
             }
 
             return false;

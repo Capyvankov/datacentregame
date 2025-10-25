@@ -13,28 +13,42 @@ namespace dataCentre
         {
             Server[] servers = { AllServers.server1, AllServers.server2, AllServers.server3, AllServers.server4, AllServers.server5 };
             var random = new Random();
+            int powerDrawNow = 0;
             foreach (Server server in servers)
             {
                 if (server.status == ServerStatus.Online)
                 {
                     int result = random.Next(0, 16);
-                    int index = random.Next(1, 4);
-                    if (index == 1)
-                    {
-                        server.addTemp(result); 
-                    }
-                    else if (index == 2)
-                    {
-                        server.addLoad(result);
-                    }
-                    else if (index == 3) 
-                    { 
-                        server.addMemory(result); 
-                    }
-                    server.powerDraw = server.memoryUse * 10 + server.load * 10;
+                    server.addMemory(result);
+                    server.load = server.memoryUse/5*2;
+                    server.temp = server.temp + (10 * server.load) / 5;
+                    server.powerDraw = server.memoryUse * 10 + server.load * 20;
                     server.testWork();
                 }
+                if (server.status == ServerStatus.Offline) AllServers.SLA -= 1;
+                if (server.status == ServerStatus.Failed) AllServers.SLA -= 5;
 
+                if (server.coolant)
+                {
+                    powerDrawNow += 100;
+                    server.temp -= 5;
+                }
+
+                server.powerDraw += powerDrawNow;
+                server.temp -= 1;
+
+                if (server.temp < 20) server.temp = 20;
+            }
+            if (powerDrawNow > AllServers.powerDraw)
+            {
+                Printer.SystMes($"Power limit exceed!", "red", "ERROR");
+                Printer.SystMes($"Overload protection triggered.", "cyan", "FAILSAFE");
+                Printer.SystMes($"Emergency shutdown sequence engaged.", "cyan", "SYSTEM");
+                AllServers.server1.shutdown();
+                AllServers.server2.shutdown();
+                AllServers.server3.shutdown();
+                AllServers.server4.shutdown();
+                AllServers.server5.shutdown();
             }
         }
     }
