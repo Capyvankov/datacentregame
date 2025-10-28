@@ -15,6 +15,6 @@ namespace dataCentre
         public static Server server4 = new Server { serverNum = 4 };
         public static Server server5 = new Server { serverNum = 5 };
         public static int SLA = 100;
-        public static int powerDraw = 8000;
+        public static int powerDraw = 5000;
     }
 }
