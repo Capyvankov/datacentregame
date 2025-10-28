@@ -1,4 +1,4 @@
-﻿using Spectre.Console;
+using Spectre.Console;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +9,15 @@ namespace dataCentre
 {
     public static class GameOver
     {
+        public static event Action? GameOverTriggered;
+
+        public static bool IsGameOver { get; private set; }
+
+        public static void Reset()
+        {
+            IsGameOver = false;
+        }
+
         public static void GameOverFunc(string purpose)
         {
             var panel = new Panel($"" +
@@ -19,6 +28,9 @@ namespace dataCentre
             panel.Padding = new Padding(2, 2, 2, 2);
             AnsiConsole.Profile.Capabilities.Ansi = true;
             AnsiConsole.Write(panel);
+
+            IsGameOver = true;
+            GameOverTriggered?.Invoke();
         }
     }
 }
