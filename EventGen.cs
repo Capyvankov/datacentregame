@@ -19,11 +19,11 @@ namespace dataCentre
             {
                 if (server.status == ServerStatus.Online)
                 {
-                    int result = random.Next(0, 1);
+                    int result = random.Next(0, 2);
                     server.addMemory(result);
-                    server.load = server.memoryUse / 5 * 2;
+                    server.load = server.memoryUse;
                     TempChange(server);
-                    server.powerDraw = server.memoryUse * 10 + server.load * 20 + server.coolant * 20;
+                    server.powerDraw = server.memoryUse * 10 + server.load * 20 + server.coolant * 50;
                     server.testWork();
                 }
                 if (server.status == ServerStatus.Offline) AllServers.SLA -= 1;
@@ -50,7 +50,7 @@ namespace dataCentre
             // константы — подгоняй балансом
             int ambient = 25; //температура комнаты
 
-            int upDiv = 8;   // чем больше — тем медленнее нагрев
+            int upDiv = 6;   // чем больше — тем медленнее нагрев
             int maxUp = 10;  // максимум роста за тик
 
             int downDiv = 3;   // чем больше — тем медленнее естественное охлаждение

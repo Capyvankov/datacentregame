@@ -121,37 +121,37 @@ namespace dataCentre
             if (statusCmd.cmdName == command[0])
             {
                 if (command[1] == "1") ((Action<Server>)statusCmd.commandDo)(AllServers.server1);
-                if (command[1] == "2") ((Action<Server>)statusCmd.commandDo)(AllServers.server2);
-                if (command[1] == "3") ((Action<Server>)statusCmd.commandDo)(AllServers.server3);
-                if (command[1] == "4") ((Action<Server>)statusCmd.commandDo)(AllServers.server4);
-                if (command[1] == "5") ((Action<Server>)statusCmd.commandDo)(AllServers.server5);
+                else if (command[1] == "2") ((Action<Server>)statusCmd.commandDo)(AllServers.server2);
+                else if (command[1] == "3") ((Action<Server>)statusCmd.commandDo)(AllServers.server3);
+                else if(command[1] == "4") ((Action<Server>)statusCmd.commandDo)(AllServers.server4);
+                else if(command[1] == "5") ((Action<Server>)statusCmd.commandDo)(AllServers.server5);
                 else Printer.SystMes($"Invalid argument {string.Join(" ", command.Skip(1))}", "#FF0000", "ERROR");
             }
             else if (rebootCmd.cmdName == command[0])
             {
                 if (command[1] == "1") ((Action<Server>)rebootCmd.commandDo)(AllServers.server1);
-                if (command[1] == "2") ((Action<Server>)rebootCmd.commandDo)(AllServers.server2);
-                if (command[1] == "3") ((Action<Server>)rebootCmd.commandDo)(AllServers.server3);
-                if (command[1] == "4") ((Action<Server>)rebootCmd.commandDo)(AllServers.server4);
-                if (command[1] == "5") ((Action<Server>)rebootCmd.commandDo)(AllServers.server5);
+                else if(command[1] == "2") ((Action<Server>)rebootCmd.commandDo)(AllServers.server2);
+                else if(command[1] == "3") ((Action<Server>)rebootCmd.commandDo)(AllServers.server3);
+                else if(command[1] == "4") ((Action<Server>)rebootCmd.commandDo)(AllServers.server4);
+                else if(command[1] == "5") ((Action<Server>)rebootCmd.commandDo)(AllServers.server5);
                 else Printer.SystMes($"Invalid argument {string.Join(" ", command.Skip(1))}", "#FF0000", "ERROR");
             }
             else if (shutdownCmd.cmdName == command[0])
             {
                 if (command[1] == "1") ((Action<Server>)shutdownCmd.commandDo)(AllServers.server1);
-                if (command[1] == "2") ((Action<Server>)shutdownCmd.commandDo)(AllServers.server2);
-                if (command[1] == "3") ((Action<Server>)shutdownCmd.commandDo)(AllServers.server3);
-                if (command[1] == "4") ((Action<Server>)shutdownCmd.commandDo)(AllServers.server4);
-                if (command[1] == "5") ((Action<Server>)shutdownCmd.commandDo)(AllServers.server5);
+                else if(command[1] == "2") ((Action<Server>)shutdownCmd.commandDo)(AllServers.server2);
+                else if(command[1] == "3") ((Action<Server>)shutdownCmd.commandDo)(AllServers.server3);
+                else if(command[1] == "4") ((Action<Server>)shutdownCmd.commandDo)(AllServers.server4);
+                else if(command[1] == "5") ((Action<Server>)shutdownCmd.commandDo)(AllServers.server5);
                 else Printer.SystMes($"Invalid argument {string.Join(" ", command.Skip(1))}", "#FF0000", "ERROR");
             }
             else if (startCmd.cmdName == command[0])
             {
                 if (command[1] == "1") ((Action<Server>)startCmd.commandDo)(AllServers.server1);
-                if (command[1] == "2") ((Action<Server>)startCmd.commandDo)(AllServers.server2);
-                if (command[1] == "3") ((Action<Server>)startCmd.commandDo)(AllServers.server3);
-                if (command[1] == "4") ((Action<Server>)startCmd.commandDo)(AllServers.server4);
-                if (command[1] == "5") ((Action<Server>)startCmd.commandDo)(AllServers.server5);
+                else if(command[1] == "2") ((Action<Server>)startCmd.commandDo)(AllServers.server2);
+                else if(command[1] == "3") ((Action<Server>)startCmd.commandDo)(AllServers.server3);
+                else if(command[1] == "4") ((Action<Server>)startCmd.commandDo)(AllServers.server4);
+                else if(command[1] == "5") ((Action<Server>)startCmd.commandDo)(AllServers.server5);
 
                 else Printer.SystMes($"Invalid argument {string.Join(" ", command.Skip(1))}", "#FF0000", "ERROR");
             }
@@ -160,11 +160,11 @@ namespace dataCentre
                 try
                 {
                     int cooling = int.Parse(command[2]);
-                    if (command[1] == "1") ((Action<Server, int>)coolingCmd.commandDo)(AllServers.server1, cooling);
-                    if (command[1] == "2") ((Action<Server, int>)coolingCmd.commandDo)(AllServers.server2, cooling);
-                    if (command[1] == "3") ((Action<Server, int>)coolingCmd.commandDo)(AllServers.server3, cooling);
-                    if (command[1] == "4") ((Action<Server, int>)coolingCmd.commandDo)(AllServers.server4, cooling);
-                    if (command[1] == "5") ((Action<Server, int>)coolingCmd.commandDo)(AllServers.server5, cooling);
+                    if(command[1] == "1") ((Action<Server, int>)coolingCmd.commandDo)(AllServers.server1, cooling);
+                    else if(command[1] == "2") ((Action<Server, int>)coolingCmd.commandDo)(AllServers.server2, cooling);
+                    else if(command[1] == "3") ((Action<Server, int>)coolingCmd.commandDo)(AllServers.server3, cooling);
+                    else if(command[1] == "4") ((Action<Server, int>)coolingCmd.commandDo)(AllServers.server4, cooling);
+                    else if(command[1] == "5") ((Action<Server, int>)coolingCmd.commandDo)(AllServers.server5, cooling);
 
                     else Printer.SystMes($"Invalid argument {string.Join(" ", command.Skip(1))}", "#FF0000", "ERROR");
                 }
@@ -177,7 +177,6 @@ namespace dataCentre
             {
                 ((Action)reportCmd.commandDo)();
             }
-
             else
             {
                 Printer.SystMes($"No command name {command[0]}", "#FF0000", "ERROR");
