@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,36 +13,73 @@ namespace dataCentre
         // не перемешивались с командами игрока.
         private readonly object _consoleLock = new();
 
+        private CancellationTokenSource? _cts;
+        private bool _isGameOver;
+
         public async Task GoGame()
         {
-            using CancellationTokenSource cts = new();
+            _cts = new CancellationTokenSource();
+            _isGameOver = false;
             Commands com = new Commands(_consoleLock);
 
-            // Стартуем асинхронную фоновую задачу непосредственно перед циклом чтения команд,
-            // чтобы она работала параллельно с игровыми действиями.
-            Task backgroundTask = Task.Run(() => BackgroundLoopAsync(cts.Token));
-            while (true)
+            void OnGameOverTriggered()
             {
-                string? command = Console.ReadLine();
-                bool shouldExit = command is null || com.readCommand(command);
+                _isGameOver = true;
+                _cts?.Cancel();
+            }
 
-                if (shouldExit)
+            GameOver.Reset();
+            GameOver.GameOverTriggered += OnGameOverTriggered;
+
+            Task backgroundTask = Task.Run(() => BackgroundLoopAsync(_cts.Token));
+
+            try
+            {
+                while (!_isGameOver)
                 {
-                    // При завершении игры сигнализируем фоновой задаче о необходимости остановки.
-                    cts.Cancel();
-
-                    try
+                    if (Console.KeyAvailable)
                     {
-                        // Дожидаемся завершения фонового цикла, чтобы корректно освободить ресурсы.
-                        await backgroundTask.ConfigureAwait(false);
-                    }
-                    catch (OperationCanceledException)
-                    {
-                    }
+                        string? command = Console.ReadLine();
+                        bool shouldExit = command is null || com.readCommand(command);
 
-                    break;
+                        if (shouldExit)
+                        {
+                            _isGameOver = true;
+                            _cts?.Cancel();
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            await Task.Delay(50, _cts.Token).ConfigureAwait(false);
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                GameOver.GameOverTriggered -= OnGameOverTriggered;
+
+                if (_cts is { IsCancellationRequested: false })
+                {
+                    _cts.Cancel();
                 }
 
+                try
+                {
+                    await backgroundTask.ConfigureAwait(false);
+                }
+                catch (OperationCanceledException)
+                {
+                }
+
+                _cts.Dispose();
+                _cts = null;
             }
         }
 
@@ -67,7 +104,7 @@ namespace dataCentre
 
                 // Здесь можно вызывать любую «тяжёлую» игровую логику, требующую регулярного запуска.
                 EventGen.Event();
-                
+
                 lock (_consoleLock)
                 {
                     // Сообщаем пользователю о завершении фоновой работы.
