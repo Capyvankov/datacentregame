@@ -53,7 +53,7 @@ namespace dataCentre
                 try
                 {
                     // Ждём 15 секунд между проверками, сохраняя возможность отмены.
-                    await Task.Delay(TimeSpan.FromSeconds(15), token).ConfigureAwait(false);
+                    await Task.Delay(TimeSpan.FromSeconds(3), token).ConfigureAwait(false);
                 }
                 catch (OperationCanceledException)
                 {

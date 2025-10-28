@@ -15,7 +15,7 @@ namespace dataCentre.server
         public int load = 0;    //нагрузка на проц
         public int memoryUse = 0; //использвоания оперативки
         public int powerDraw = 0; //энергопотребление
-        public bool coolant = false;
+        public int coolant = 0;
         public ServerStatus status = ServerStatus.Offline;
 
         //метода работы с данными серверов
@@ -59,35 +59,16 @@ namespace dataCentre.server
         {
             this.powerDraw += powerDraw;
         }
-        public void coolantUse(bool cool)
+        public void coolantUse(int level)
         {
-            if (cool == true)
+            if (level > 5 ||  level < 0)
             {
-                if (coolant == true)
-                {
-                    Printer.SystMes("Coolant already on!", "yellow", "WARN");
-                }
-                else
-                {
-                    Printer.SystMes("Coolant on", "cyan", "SYSTEM");
-                    coolant = true;
-                    powerDraw += 100;
-                }
+                Printer.SystMes("Cooling parameter out of range. Valid levels: 0..5.", "red", "ERROR");
             }
-            if (cool == false)
+            else
             {
-                if (coolant == false)
-                {
-                    Printer.SystMes("Coolant already off!", "yellow", "WARN");
-                }
-                else
-                {
-                    Printer.SystMes("Coolant off", "cyan", "SYSTEM");
-                    coolant = false;
-                    powerDraw -= 100;
-                }
-            }
-            
+                this.coolant = level;
+            }          
         }
 
         public void shutdown()
@@ -98,7 +79,7 @@ namespace dataCentre.server
                 this.load = 0;
                 this.memoryUse = 0;
                 this.powerDraw = 0;
-                this.coolant = false;
+                this.coolant = 0;
                 Printer.SystMes($"srv{this.serverNum} offline", "yellow", "WARN");
             }
         }
@@ -111,7 +92,7 @@ namespace dataCentre.server
                 this.load = 20;
                 this.memoryUse = 20;
                 this.powerDraw = this.memoryUse * 10 + this.load * 20;
-                this.coolant = false;
+                this.coolant = 0;
                 Printer.SystMes($"srv{this.serverNum} online", "yellow", "WARN");
             }
         }
@@ -142,7 +123,7 @@ namespace dataCentre.server
                 this.load = 0;
                 this.memoryUse = 0;
                 this.powerDraw = 0;
-                this.coolant = false;
+                this.coolant = 0;
                 Printer.SystMes($"srv{this.serverNum} : hardware integrity lost", "#8B0000", "CRITICAL");
             }
         }

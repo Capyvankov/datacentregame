@@ -69,7 +69,7 @@ namespace dataCentre
             }
         }
 
-        void CoolingDelegate(Server server, bool coolant)
+        void CoolingDelegate(Server server, int coolant)
         {
             lock (_consoleLock)
             {
@@ -115,7 +115,7 @@ namespace dataCentre
             Cmd rebootCmd = new Cmd { cmdName = "reboot", commandDo = (Action<Server>)RebootDelegate };
             Cmd shutdownCmd = new Cmd { cmdName = "shutdown", commandDo = (Action<Server>)ShutdownDelegate };
             Cmd startCmd = new Cmd { cmdName = "start", commandDo = (Action<Server>)StartDelegate };
-            Cmd coolingCmd = new Cmd { cmdName = "cooling", commandDo = (Action<Server, bool>)CoolingDelegate };
+            Cmd coolingCmd = new Cmd { cmdName = "cooling", commandDo = (Action<Server, int>)CoolingDelegate };
             Cmd reportCmd = new Cmd { cmdName = "report", commandDo = (Action)ReportDelegate };
 
 
@@ -172,14 +172,12 @@ namespace dataCentre
             }
             else if (coolingCmd.cmdName == command[0])
             {
-                bool cooling = false; 
-                if (command[2] == "On") cooling = true;
-                if (command[2] == "Off") cooling = false;
-                if (command[1] == "1") ((Action<Server, bool>)coolingCmd.commandDo)(AllServers.server1, cooling);
-                if (command[1] == "2") ((Action<Server, bool>)coolingCmd.commandDo)(AllServers.server2, cooling);
-                if (command[1] == "3") ((Action<Server, bool>)coolingCmd.commandDo)(AllServers.server3, cooling);
-                if (command[1] == "4") ((Action<Server, bool>)coolingCmd.commandDo)(AllServers.server4, cooling);
-                if (command[1] == "5") ((Action<Server, bool>)coolingCmd.commandDo)(AllServers.server5, cooling);
+                int cooling = int.Parse(command[2]);
+                if (command[1] == "1") ((Action<Server, int>)coolingCmd.commandDo)(AllServers.server1, cooling);
+                if (command[1] == "2") ((Action<Server, int>)coolingCmd.commandDo)(AllServers.server2, cooling);
+                if (command[1] == "3") ((Action<Server, int>)coolingCmd.commandDo)(AllServers.server3, cooling);
+                if (command[1] == "4") ((Action<Server, int>)coolingCmd.commandDo)(AllServers.server4, cooling);
+                if (command[1] == "5") ((Action<Server, int>)coolingCmd.commandDo)(AllServers.server5, cooling);
             }
             else if (reportCmd.cmdName == command[0])
             {
