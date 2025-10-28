@@ -31,9 +31,8 @@ namespace dataCentre
             }
             if (powerDrawNow > AllServers.powerDraw)
             {
-                Printer.SystMes($"Power limit exceed!", "red", "ERROR");
-                Printer.SystMes($"Overload protection triggered.", "cyan", "FAILSAFE");
-                Printer.SystMes($"Emergency shutdown sequence engaged.", "cyan", "SYSTEM");
+                Printer.SystMes($"Power limit exceed!", "#FF0000", "ERROR");
+                Printer.SystMes($"Overload protection triggered. Emergency shutdown sequence engaged.", "#00BFFF", "SYSTEM");
                 AllServers.server1.shutdown();
                 AllServers.server2.shutdown();
                 AllServers.server3.shutdown();

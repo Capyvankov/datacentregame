@@ -35,7 +35,7 @@ namespace dataCentre.server
             }
             if (memoryUse >= 100)
             {
-                Printer.SystMes($"srv{this.serverNum}: Memory usage critical!", "red", "ERROR");
+                Printer.SystMes($"srv{this.serverNum}: Memory usage critical!", "#FF0000", "ERROR");
                 shutdown();
             }
         }
@@ -63,7 +63,7 @@ namespace dataCentre.server
         {
             if (level > 5 ||  level < 0)
             {
-                Printer.SystMes("Cooling parameter out of range. Valid levels: 0..5.", "red", "ERROR");
+                Printer.SystMes("Cooling parameter out of range. Valid levels: 0..5.", "#FF0000", "ERROR");
             }
             else
             {
@@ -80,7 +80,7 @@ namespace dataCentre.server
                 this.memoryUse = 0;
                 this.powerDraw = 0;
                 this.coolant = 0;
-                Printer.SystMes($"srv{this.serverNum} offline", "yellow", "WARN");
+                Printer.SystMes($"srv{this.serverNum} offline", "#FFD700", "WARN");
             }
         }
 
@@ -93,7 +93,7 @@ namespace dataCentre.server
                 this.memoryUse = 20;
                 this.powerDraw = this.memoryUse * 10 + this.load * 20;
                 this.coolant = 0;
-                Printer.SystMes($"srv{this.serverNum} online", "yellow", "WARN");
+                Printer.SystMes($"srv{this.serverNum} online", "#FFD700", "WARN");
             }
         }
 
@@ -111,7 +111,7 @@ namespace dataCentre.server
                    Thread.Sleep(30); // 100 * 30 мс = ~3 сек
                }
            });
-            Printer.SystMes("Rebooting is sucsesfull", "cyan", "INFO");
+            Printer.SystMes("Rebooting is sucsesfull", "#00BFFF", "INFO");
             this.memoryUse = this.memoryUse / 2;
         }
 

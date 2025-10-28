@@ -109,8 +109,6 @@ namespace dataCentre
                 return false;
             }
 
-            //Cmd printCmd = new Cmd { cmdName = "print", commandDo = (Action<string[]>)PrintDelegate };
-            //Cmd sumCmd = new Cmd { cmdName = "sum", commandDo = (Action<string[]>)SumDelegate };
             Cmd statusCmd = new Cmd { cmdName = "status", commandDo = (Action<Server>)StatusDelegate };
             Cmd rebootCmd = new Cmd { cmdName = "reboot", commandDo = (Action<Server>)RebootDelegate };
             Cmd shutdownCmd = new Cmd { cmdName = "shutdown", commandDo = (Action<Server>)ShutdownDelegate };
@@ -120,24 +118,6 @@ namespace dataCentre
 
 
             string[] command = inpCommand.Split(" ");
-            // Специальная команда завершения игры: её обрабатывает сам Game.GoGame.
-            //if (string.Equals(command[0], "exit", StringComparison.OrdinalIgnoreCase))
-            //{
-            //    lock (_consoleLock)
-            //    {
-            //        Console.WriteLine("Exiting game...");
-            //    }
-
-            //    return true;
-            //}
-            //if (printCmd.cmdName == command[0])
-            //{
-            //    ((Action<string[]>)printCmd.commandDo)(command);
-            //}
-            //else if (sumCmd.cmdName == command[0])
-            //{
-            //    ((Action<string[]>)sumCmd.commandDo)(command);
-            //}
             if (statusCmd.cmdName == command[0])
             {
                 if (command[1] == "1") ((Action<Server>)statusCmd.commandDo)(AllServers.server1);
@@ -145,6 +125,7 @@ namespace dataCentre
                 if (command[1] == "3") ((Action<Server>)statusCmd.commandDo)(AllServers.server3);
                 if (command[1] == "4") ((Action<Server>)statusCmd.commandDo)(AllServers.server4);
                 if (command[1] == "5") ((Action<Server>)statusCmd.commandDo)(AllServers.server5);
+                else Printer.SystMes($"Invalid argument {string.Join(" ", command.Skip(1))}", "#FF0000", "ERROR");
             }
             else if (rebootCmd.cmdName == command[0])
             {
@@ -153,6 +134,7 @@ namespace dataCentre
                 if (command[1] == "3") ((Action<Server>)rebootCmd.commandDo)(AllServers.server3);
                 if (command[1] == "4") ((Action<Server>)rebootCmd.commandDo)(AllServers.server4);
                 if (command[1] == "5") ((Action<Server>)rebootCmd.commandDo)(AllServers.server5);
+                else Printer.SystMes($"Invalid argument {string.Join(" ", command.Skip(1))}", "#FF0000", "ERROR");
             }
             else if (shutdownCmd.cmdName == command[0])
             {
@@ -161,6 +143,7 @@ namespace dataCentre
                 if (command[1] == "3") ((Action<Server>)shutdownCmd.commandDo)(AllServers.server3);
                 if (command[1] == "4") ((Action<Server>)shutdownCmd.commandDo)(AllServers.server4);
                 if (command[1] == "5") ((Action<Server>)shutdownCmd.commandDo)(AllServers.server5);
+                else Printer.SystMes($"Invalid argument {string.Join(" ", command.Skip(1))}", "#FF0000", "ERROR");
             }
             else if (startCmd.cmdName == command[0])
             {
@@ -169,19 +152,35 @@ namespace dataCentre
                 if (command[1] == "3") ((Action<Server>)startCmd.commandDo)(AllServers.server3);
                 if (command[1] == "4") ((Action<Server>)startCmd.commandDo)(AllServers.server4);
                 if (command[1] == "5") ((Action<Server>)startCmd.commandDo)(AllServers.server5);
+
+                else Printer.SystMes($"Invalid argument {string.Join(" ", command.Skip(1))}", "#FF0000", "ERROR");
             }
             else if (coolingCmd.cmdName == command[0])
             {
-                int cooling = int.Parse(command[2]);
-                if (command[1] == "1") ((Action<Server, int>)coolingCmd.commandDo)(AllServers.server1, cooling);
-                if (command[1] == "2") ((Action<Server, int>)coolingCmd.commandDo)(AllServers.server2, cooling);
-                if (command[1] == "3") ((Action<Server, int>)coolingCmd.commandDo)(AllServers.server3, cooling);
-                if (command[1] == "4") ((Action<Server, int>)coolingCmd.commandDo)(AllServers.server4, cooling);
-                if (command[1] == "5") ((Action<Server, int>)coolingCmd.commandDo)(AllServers.server5, cooling);
+                try
+                {
+                    int cooling = int.Parse(command[2]);
+                    if (command[1] == "1") ((Action<Server, int>)coolingCmd.commandDo)(AllServers.server1, cooling);
+                    if (command[1] == "2") ((Action<Server, int>)coolingCmd.commandDo)(AllServers.server2, cooling);
+                    if (command[1] == "3") ((Action<Server, int>)coolingCmd.commandDo)(AllServers.server3, cooling);
+                    if (command[1] == "4") ((Action<Server, int>)coolingCmd.commandDo)(AllServers.server4, cooling);
+                    if (command[1] == "5") ((Action<Server, int>)coolingCmd.commandDo)(AllServers.server5, cooling);
+
+                    else Printer.SystMes($"Invalid argument {string.Join(" ", command.Skip(1))}", "#FF0000", "ERROR");
+                }
+                catch (Exception)
+                {
+                    Printer.SystMes($"Invalid argument {string.Join(" ", command.Skip(1))}", "#FF0000", "ERROR");
+                }
             }
             else if (reportCmd.cmdName == command[0])
             {
                 ((Action)reportCmd.commandDo)();
+            }
+
+            else
+            {
+                Printer.SystMes($"No command name {command[0]}", "#FF0000", "ERROR");
             }
 
             return false;
